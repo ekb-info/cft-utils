@@ -25,3 +25,5 @@
 /etc/portage/savedconfig
 /etc/ca-certificates.conf
 /etc/conf.d/net.eth0
+/etc/cf-template
+/etc/ssl/postfix/server.*
