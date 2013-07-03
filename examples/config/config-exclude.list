@@ -23,3 +23,5 @@
 /etc/init.d/cf-monitord
 /etc/init.d/cf-serverd
 /etc/portage/savedconfig
+/etc/ca-certificates.conf
+/etc/conf.d/net.eth0
