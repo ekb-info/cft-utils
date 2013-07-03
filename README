@@ -1,0 +1,6 @@
+cft-utils
+=========
+
+cfengine template compare tools
+
+Compare 2 hosts using rsync
