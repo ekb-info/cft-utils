@@ -28,3 +28,4 @@
 /etc/cf-template
 /etc/ssl/postfix/server.*
 /etc/mail/aliases.db
+/etc/resolv.conf
