@@ -1,12 +1,20 @@
 #!/bin/sh
 
+if [ "${1}" = '-i' ]; then
+	INPLACE=yes
+	shift
+fi
+
 FILE="${1}"
 
 if [ -z "${FILE}" ]; then
-	echo "USAGE: ${0##*/} <file>"
+	echo "USAGE: ${0##*/} [-i] <file>"
+	echo '-i   inplace copy'
 	exit
 fi
 
 source /etc/cft/cft.conf || exit 1
 
-scp ${CFT_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${FILE}" ./
+[ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
+
+scp ${CFT_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${FILE}" "${DEST}"
