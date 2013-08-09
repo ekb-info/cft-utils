@@ -1,5 +1,15 @@
 #!/bin/sh
 
+
+CONFIG_FILE='/etc/cft/cft.conf'
+
+if [ "${1}" = '--config' -o "${1}" = '-c' ]; then
+  CONFIG_FILE="${2}"
+  [ "${CONFIG_FILE#/}" = "${CONFIG_FILE}" ] && CONFIG_FILE="/etc/cft/${CONFIG_FILE}"
+  [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
+  shift 2
+fi
+
 FILE="${1}"
 
 if [ -z "${FILE}" ]; then
@@ -7,7 +17,7 @@ if [ -z "${FILE}" ]; then
 	exit
 fi
 
-source /etc/cft/cft.conf || exit 1
+source "${CONFIG_FILE}" || exit 1
 
 if [ ! -e "${FILE}" ]; then
 	echo "Local file ${FILE} not found"
@@ -19,5 +29,5 @@ if [ ! -f "${FILE}" ]; then
 	exit 1
 fi
 
-ssh ${CFT_OPTS} -p "${CFT_PORT}" "${CFT_HOST}" cat "${FILE}" | diff -u "${FILE}" - |tail -n +3
+ssh ${CFT_OPTS} -p "${CFT_PORT}" "${CFT_HOST}" cat "${CFT_ROOT}${CFT_ROOT:+/}${FILE}" | diff -u "${FILE}" - |tail -n +3
 
