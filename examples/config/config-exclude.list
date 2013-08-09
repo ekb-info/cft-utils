@@ -29,3 +29,8 @@
 /etc/ssl/postfix/server.*
 /etc/mail/aliases.db
 /etc/resolv.conf
+/etc/group
+/etc/gshadow
+/etc/passwd
+/etc/shadow
+/etc/eselect/postgresql/active.links*
