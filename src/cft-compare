@@ -1,10 +1,11 @@
 #!/bin/sh
 
-source /etc/cft/cft.conf || exit 1
+CONFIG_FILE='/etc/cft/cft.conf'
 
 print_help() {
   echo "USAGE: ${0##*\/} [-v]"
   echo '     -s --show             Show selected (D,F,d,f,l,s,c,p,o,g,U,E,e,g,b,i,u)'
+  echo "     -c --config <file>    Use config <file> instead of default (${CONFIG_FILE})"
   echo '     -C --show-conf        Show CONFIGS section'
   echo '     -P --show-pkg         Show PKG section'
   echo '     -v --verbose          Be verbose'
@@ -25,8 +26,14 @@ while [ -n "${1}" ]; do
         SHOW_ITEMS="${2}"
       else
         echo 'show items argument required' >&2
-  exit 1
+        exit 1
       fi
+      shift
+      ;;
+    -c|--config)
+      CONFIG_FILE="${2}"
+      [ "${CONFIG_FILE#/}" = "${CONFIG_FILE}" ] && CONFIG_FILE="/etc/cft/${CONFIG_FILE}"
+      [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
       shift
       ;;
     -C|--show-conf)
@@ -47,6 +54,8 @@ while [ -n "${1}" ]; do
   esac
   shift
 done
+
+source "${CONFIG_FILE}" || exit 1
 
 print_block() {
   [ -z "${2}" ] && return 0
