@@ -1,5 +1,14 @@
 #!/bin/sh
 
+CONFIG_FILE='/etc/cft/cft.conf'
+
+if [ "${1}" = '--config' -o "${1}" = '-c' ]; then
+  CONFIG_FILE="${2}"
+  [ "${CONFIG_FILE#/}" = "${CONFIG_FILE}" ] && CONFIG_FILE="/etc/cft/${CONFIG_FILE}"
+  [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
+  shift 2
+fi
+
 if [ "${1}" = '-i' ]; then
 	INPLACE=yes
 	shift
@@ -13,8 +22,8 @@ if [ -z "${FILE}" ]; then
 	exit
 fi
 
-source /etc/cft/cft.conf || exit 1
+source "${CONFIG_FILE}" || exit 1
 
 [ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
 
-scp ${CFT_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${FILE}" "${DEST}"
+scp ${CFT_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${DEST}"

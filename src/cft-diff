@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 CONFIG_FILE='/etc/cft/cft.conf'
 
 if [ "${1}" = '--config' -o "${1}" = '-c' ]; then
