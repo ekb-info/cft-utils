@@ -86,11 +86,8 @@ print_block() {
   [ -z "${2}" ] && return 0
   [ "${SHOW_ITEMS/[${3}]/}" = "${SHOW_ITEMS}" ] && return 0
   COUNT=$(echo "${2}" |wc -l)
-  echo "==${SHOW_IDS:+${3}=} ${1} [${COUNT}]"
-  if [ "${VERBOSE}" = yes -a -n "${2}" ]; then
-    echo "${2}"
-    echo
-  fi
+  echo "\n==${SHOW_IDS:+${3}=} ${1} [${COUNT}]"
+  [ "${VERBOSE}" = yes ] && echo "${2}\n"
 }
 
 if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
@@ -104,36 +101,32 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
     |head -n-3 \
     |tail -n +2)
   
-  UNTRACKED_DIRS=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*/$' |sed 's#^\*deleting   #/#')
-  UNTRACKED_FILES=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*[^/]$' |sed 's#^\*deleting   #/#')
-  MISSING_DIRS=$(echo "${RSYNC_DATA}"  |grep '^cd+++++++++ ' |sed 's#^cd+++++++++ #/#')
-  MISSING_FILES=$(echo "${RSYNC_DATA}"  |grep '^>f+++++++++ ' |sed 's#^>f+++++++++ #/#')
-  MISSING_LINKS=$(echo "${RSYNC_DATA}"  |grep '^cL+++++++++ ' |sed 's#^cL+++++++++ #/#')
-  MODIFIED_LINKS=$(echo "${RSYNC_DATA}"  |grep '^cLc\........ ' |sed 's#^cLc\........ #/#')
-  MODIFIED_FILES=$(echo "${RSYNC_DATA}"  |grep '^>fc........ ' |sed 's#^>fc........ #/#')
-  CHANGED_PERMS=$(echo "${RSYNC_DATA}"  |grep '^.....p..... ' |sed 's#^.....p..... #/#')
-  CHANGED_OWNER=$(echo "${RSYNC_DATA}"  |grep '^......o.... ' |sed 's#^......o.... #/#')
-  CHANGED_GROUP=$(echo "${RSYNC_DATA}"  |grep '^.......g... ' |sed 's#^.......g... #/#')
+  UNTRACKED_DIRS=$( echo "${RSYNC_DATA}" | grep '^\*deleting   .*/$'    | sed 's#^\*deleting   #/#')
+  UNTRACKED_FILES=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*[^/]$' | sed 's#^\*deleting   #/#')
+  MISSING_DIRS=$(   echo "${RSYNC_DATA}" | grep '^cd+++++++++ '         | sed 's#^cd+++++++++ #/#')
+  MISSING_FILES=$(  echo "${RSYNC_DATA}" | grep '^>f+++++++++ '         | sed 's#^>f+++++++++ #/#')
+  MISSING_LINKS=$(  echo "${RSYNC_DATA}" | grep '^cL+++++++++ '         | sed 's#^cL+++++++++ #/#')
+  MODIFIED_LINKS=$( echo "${RSYNC_DATA}" | grep '^cLc\........ '        | sed 's#^cLc\........ #/#')
+  MODIFIED_FILES=$( echo "${RSYNC_DATA}" | grep '^>fc........ '         | sed 's#^>fc........ #/#')
+  CHANGED_PERMS=$(  echo "${RSYNC_DATA}" | grep '^.....p..... '         | sed 's#^.....p..... #/#')
+  CHANGED_OWNER=$(  echo "${RSYNC_DATA}" | grep '^......o.... '         | sed 's#^......o.... #/#')
+  CHANGED_GROUP=$(  echo "${RSYNC_DATA}" | grep '^.......g... '         | sed 's#^.......g... #/#')
   UNKNOWN=$(echo "${RSYNC_DATA}" \
     |grep -v '^\(\*deleting\|..+++++++++\|cLc\........\|>fc........\|.....p.....\|......o....\|.......g...\) ')
   
-  echo 'CONFIGS:'
-  
-  print_block 'UNTRACKED DIRS' "${UNTRACKED_DIRS}" D
-  print_block 'UNTRACKED FILES' "${UNTRACKED_FILES}" F
-  
-  print_block 'MISSING DIRS' "${MISSING_DIRS}" d
-  print_block 'MISSING FILES' "${MISSING_FILES}" f
-  print_block 'MISSING LINKS' "${MISSING_LINKS}" l
-  
-  print_block 'MODIFIED LINKS' "${MODIFIED_LINKS}" s
-  print_block 'MODIFIED FILES' "${MODIFIED_FILES}" c
-  
-  print_block 'CHANGED PERMISSIONS' "${CHANGED_PERMS}" p
-  print_block 'CHANGED OWNER' "${CHANGED_OWNER}" o
-  print_block 'CHANGED GROUP' "${CHANGED_GROUP}" g
-  
-  print_block 'UNKNOWN (!) CHANGE' "${UNKNOWN}" U
+  CONFIG_OUTPUT+=$(print_block 'UNTRACKED DIRS'      "${UNTRACKED_DIRS}"  D)
+  CONFIG_OUTPUT+=$(print_block 'UNTRACKED FILES'     "${UNTRACKED_FILES}" F)
+  CONFIG_OUTPUT+=$(print_block 'MISSING DIRS'        "${MISSING_DIRS}"    d)
+  CONFIG_OUTPUT+=$(print_block 'MISSING FILES'       "${MISSING_FILES}"   f)
+  CONFIG_OUTPUT+=$(print_block 'MISSING LINKS'       "${MISSING_LINKS}"   l)
+  CONFIG_OUTPUT+=$(print_block 'MODIFIED LINKS'      "${MODIFIED_LINKS}"  s)
+  CONFIG_OUTPUT+=$(print_block 'MODIFIED FILES'      "${MODIFIED_FILES}"  c)
+  CONFIG_OUTPUT+=$(print_block 'CHANGED PERMISSIONS' "${CHANGED_PERMS}"   p)
+  CONFIG_OUTPUT+=$(print_block 'CHANGED OWNER'       "${CHANGED_OWNER}"   o)
+  CONFIG_OUTPUT+=$(print_block 'CHANGED GROUP'       "${CHANGED_GROUP}"   g)
+  CONFIG_OUTPUT+=$(print_block 'UNKNOWN (!) CHANGE'  "${UNKNOWN}"         U)
+
+  [ -n "${CONFIG_OUTPUT}" ] && echo -e "CONFIGS:${CONFIG_OUTPUT}"
 fi
 
 if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
@@ -170,19 +163,17 @@ if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
     |grep '^.fc.*/USE$' \
     |sed 's#^........... ##')
   
-  UNTRACKED_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- [^=]\+$' |sed -e 's#^- ##' -e 's/ /-/')
-  MISSING_PACKAGES=$(echo "${RSYNC_PACKAGE}"  |grep '^+ [^=]\+$' |sed -e 's#^+ ##' -e 's/ /-/')
-  UPGRADE_PACKAGES=$(echo "${RSYNC_PACKAGE}"  |grep '^+ .\+=' |sed 's#^+ ##')
-  DOWNGRADE_PACKAGES=$(echo "${RSYNC_PACKAGE}"  |grep '^- .\+=' |sed -e 's#^- ##' -e 's/ => / <= /')
+  UNTRACKED_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- [^=]\+$' | sed -e 's#^- ##' -e 's/ /-/')
+  MISSING_PACKAGES=$(  echo "${RSYNC_PACKAGE}" | grep '^+ [^=]\+$' | sed -e 's#^+ ##' -e 's/ /-/')
+  UPGRADE_PACKAGES=$(  echo "${RSYNC_PACKAGE}" | grep '^+ .\+='    | sed -e 's#^+ ##')
+  DOWNGRADE_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- .\+='    | sed -e 's#^- ##' -e 's/ => / <= /')
   
-  echo 'PACKAGES:'
-  
-  print_block 'UNTRACKED PACKAGES' "${UNTRACKED_PACKAGES}" E
-  print_block 'MISSING PACKAGES' "${MISSING_PACKAGES}" e
-  
-  print_block 'UPGRADE PACKAGES' "${UPGRADE_PACKAGES}" x
-  print_block 'DOWNGRADE PACKAGES' "${DOWNGRADE_PACKAGES}" b
-  
-  print_block 'CHANGED IUSE FLAGS' "${CHANGED_IUSE}" i
-  print_block 'CHANGED USE FLAGS' "${CHANGED_USE}" u
+  PACKAGES_OUTPUT+=$(print_block 'UNTRACKED PACKAGES' "${UNTRACKED_PACKAGES}" E)
+  PACKAGES_OUTPUT+=$(print_block 'MISSING PACKAGES'   "${MISSING_PACKAGES}"   e)
+  PACKAGES_OUTPUT+=$(print_block 'UPGRADE PACKAGES'   "${UPGRADE_PACKAGES}"   x)
+  PACKAGES_OUTPUT+=$(print_block 'DOWNGRADE PACKAGES' "${DOWNGRADE_PACKAGES}" b)
+  PACKAGES_OUTPUT+=$(print_block 'CHANGED IUSE FLAGS' "${CHANGED_IUSE}"       i)
+  PACKAGES_OUTPUT+=$(print_block 'CHANGED USE FLAGS'  "${CHANGED_USE}"        u)
+
+  [ -n "${PACKAGES_OUTPUT}" ] && echo -e "PACKAGES:${PACKAGES_OUTPUT}"
 fi
