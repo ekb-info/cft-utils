@@ -1,5 +1,6 @@
 + Add -i switch for identifiers
-* Fix empty output sections
++ Add "NO DIFFERENCE" output
+* Hide empty output sections
 * Fix --help text
 - Rename switch --show-conf to --show-files
 - Rename switch --show-pkg to --show-packages

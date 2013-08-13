@@ -114,19 +114,19 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   UNKNOWN=$(echo "${RSYNC_DATA}" \
     |grep -v '^\(\*deleting\|..+++++++++\|cLc\........\|>fc........\|.....p.....\|......o....\|.......g...\) ')
   
-  CONFIG_OUTPUT+=$(print_block 'UNTRACKED DIRS'      "${UNTRACKED_DIRS}"  D)
-  CONFIG_OUTPUT+=$(print_block 'UNTRACKED FILES'     "${UNTRACKED_FILES}" F)
-  CONFIG_OUTPUT+=$(print_block 'MISSING DIRS'        "${MISSING_DIRS}"    d)
-  CONFIG_OUTPUT+=$(print_block 'MISSING FILES'       "${MISSING_FILES}"   f)
-  CONFIG_OUTPUT+=$(print_block 'MISSING LINKS'       "${MISSING_LINKS}"   l)
-  CONFIG_OUTPUT+=$(print_block 'MODIFIED LINKS'      "${MODIFIED_LINKS}"  s)
-  CONFIG_OUTPUT+=$(print_block 'MODIFIED FILES'      "${MODIFIED_FILES}"  c)
-  CONFIG_OUTPUT+=$(print_block 'CHANGED PERMISSIONS' "${CHANGED_PERMS}"   p)
-  CONFIG_OUTPUT+=$(print_block 'CHANGED OWNER'       "${CHANGED_OWNER}"   o)
-  CONFIG_OUTPUT+=$(print_block 'CHANGED GROUP'       "${CHANGED_GROUP}"   g)
-  CONFIG_OUTPUT+=$(print_block 'UNKNOWN (!) CHANGE'  "${UNKNOWN}"         U)
+  FILES_OUTPUT+=$(print_block 'UNTRACKED DIRS'      "${UNTRACKED_DIRS}"  D)
+  FILES_OUTPUT+=$(print_block 'UNTRACKED FILES'     "${UNTRACKED_FILES}" F)
+  FILES_OUTPUT+=$(print_block 'MISSING DIRS'        "${MISSING_DIRS}"    d)
+  FILES_OUTPUT+=$(print_block 'MISSING FILES'       "${MISSING_FILES}"   f)
+  FILES_OUTPUT+=$(print_block 'MISSING LINKS'       "${MISSING_LINKS}"   l)
+  FILES_OUTPUT+=$(print_block 'MODIFIED LINKS'      "${MODIFIED_LINKS}"  s)
+  FILES_OUTPUT+=$(print_block 'MODIFIED FILES'      "${MODIFIED_FILES}"  c)
+  FILES_OUTPUT+=$(print_block 'CHANGED PERMISSIONS' "${CHANGED_PERMS}"   p)
+  FILES_OUTPUT+=$(print_block 'CHANGED OWNER'       "${CHANGED_OWNER}"   o)
+  FILES_OUTPUT+=$(print_block 'CHANGED GROUP'       "${CHANGED_GROUP}"   g)
+  FILES_OUTPUT+=$(print_block 'UNKNOWN (!) CHANGE'  "${UNKNOWN}"         U)
 
-  [ -n "${CONFIG_OUTPUT}" ] && echo -e "CONFIGS:${CONFIG_OUTPUT}"
+  [ -n "${FILES_OUTPUT}" ] && echo -e "CONFIGS:${FILES_OUTPUT}"
 fi
 
 if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
@@ -177,3 +177,5 @@ if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
 
   [ -n "${PACKAGES_OUTPUT}" ] && echo -e "PACKAGES:${PACKAGES_OUTPUT}"
 fi
+
+[ -z "${FILES_OUTPUT}" -a -z "${PACKAGES_OUTPUT}" ] && echo "NO DIFFERENCE"
