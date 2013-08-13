@@ -4,12 +4,34 @@ CONFIG_FILE='/etc/cft/cft.conf'
 
 print_help() {
   echo "USAGE: ${0##*\/} [-v]"
-  echo '     -s --show             Show selected (D,F,d,f,l,s,c,p,o,g,U,E,e,g,b,i,u)'
+  echo '     -s --show             Show selected groups (D,F,d,f,l,s,c,p,o,g,U,E,e,g,b,i,u)'
   echo "     -c --config <file>    Use config <file> instead of default (${CONFIG_FILE})"
-  echo '     -C --show-conf        Show CONFIGS section'
-  echo '     -P --show-pkg         Show PKG section'
+  echo '     -C --show-files       Show FILES section'
+  echo '     -P --show-packages    Show PACKAGES section'
   echo '     -v --verbose          Be verbose'
-  echo '        --help             Print this help'
+  echo '     -i --ids              Show identifiers for selected groups'
+  echo '     -h --help             Print this help'
+  echo '
+Group identifiers:
+FILES:
+         D - UNTRACKED DIRS
+         F - UNTRACKED FILES
+         d - MISSING DIRS
+         f - MISSING FILES
+         l - MISSING LINKS
+         s - MODIFIED LINKS
+         c - MODIFIED FILES
+         p - CHANGED PERMISSIONS
+         o - CHANGED OWNER
+         g - CHANGED GROUP
+         U - UNKNOWN (!) CHANGE
+PACKAGES:
+         E - UNTRACKED PACKAGES
+         e - MISSING PACKAGES
+         x - UPGRADE PACKAGES
+         b - DOWNGRADE PACKAGES
+         i - CHANGED IUSE FLAGS
+         u - CHANGED USE FLAGS'
 }
 
 SHOW_ITEMS="DFdflscpogUEexbiu"
@@ -36,11 +58,14 @@ while [ -n "${1}" ]; do
       [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
       shift
       ;;
-    -C|--show-conf)
+    -C|--show-files)
       SHOW_ITEMS="DFdflscpogU"
       ;;
-    -P|--show-pkg)
+    -P|--show-packages)
       SHOW_ITEMS="Eexbiu"
+      ;;
+    -i|--ids)
+      SHOW_IDS=yes
       ;;
     -h|--help)
       print_help
@@ -61,7 +86,7 @@ print_block() {
   [ -z "${2}" ] && return 0
   [ "${SHOW_ITEMS/[${3}]/}" = "${SHOW_ITEMS}" ] && return 0
   COUNT=$(echo "${2}" |wc -l)
-  echo "==${3}= ${1} [${COUNT}]"
+  echo "==${SHOW_IDS:+${3}=} ${1} [${COUNT}]"
   if [ "${VERBOSE}" = yes -a -n "${2}" ]; then
     echo "${2}"
     echo
@@ -70,11 +95,11 @@ print_block() {
 
 if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_DATA=$(\
-    rsync ${CONFIG_SYNC_OPTS} \
+    rsync ${CFT_RSYNC_OPTS} \
       --exclude-from=/etc/cft/config-exclude.list \
       --include-from=/etc/cft/config-include.list \
       -f '- /*' \
-      --dry-run -avicxH -n --no-t --delete --omit-dir-times -e "ssh -p ${CFT_PORT} ${CFT_OPTS}" \
+      --dry-run -avicxH -n --no-t --delete --omit-dir-times -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/" / \
     |head -n-3 \
     |tail -n +2)
@@ -114,7 +139,7 @@ fi
 if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_PACKAGE_USE=$(\
     rsync --dry-run -drvic -n --no-t --delete --omit-dir-times \
-      -e "ssh -p ${CFT_PORT} ${CFT_OPTS}" \
+      -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       -f '+ */*/IUSE' \
       -f '+ */*/USE' \
       -f '- */*/**' \
