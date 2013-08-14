@@ -126,7 +126,7 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   FILES_OUTPUT+=$(print_block 'CHANGED GROUP'       "${CHANGED_GROUP}"   g)
   FILES_OUTPUT+=$(print_block 'UNKNOWN (!) CHANGE'  "${UNKNOWN}"         U)
 
-  [ -n "${FILES_OUTPUT}" ] && echo -e "CONFIGS:${FILES_OUTPUT}"
+  [ -n "${FILES_OUTPUT}" ] && echo -e "FILES:${FILES_OUTPUT}"
 fi
 
 if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
