@@ -179,3 +179,5 @@ if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
 fi
 
 [ -z "${FILES_OUTPUT}" -a -z "${PACKAGES_OUTPUT}" ] && echo "NO DIFFERENCE"
+
+exit 0

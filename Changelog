@@ -1,3 +1,6 @@
+2.0.1 - 2013-08-14
+* Fix exit code
+
 2.0.0 - 2013-08-14
 + Add -i switch for identifiers
 + Add "NO DIFFERENCE" output
