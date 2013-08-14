@@ -99,7 +99,7 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
       --dry-run -avicxH -n --no-t --delete --omit-dir-times -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/" / \
     |head -n-3 \
-    |tail -n +2)
+    |tail -n +2; [ ${PIPESTATUS[0]} -eq 0 ]) || exit $?
   
   UNTRACKED_DIRS=$( echo "${RSYNC_DATA}" | grep '^\*deleting   .*/$'    | sed 's#^\*deleting   #/#')
   UNTRACKED_FILES=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*[^/]$' | sed 's#^\*deleting   #/#')
@@ -141,7 +141,7 @@ if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
       -f '- dev-db/tokyocabinet*' \
       "${CFT_HOST}:${CFT_ROOT}/var/db/pkg/" /var/db/pkg/ \
     |head -n-3 \
-    |tail -n +2)
+    |tail -n +2; [ ${PIPESTATUS[0]} -eq 0 ]) || exit $?
   
   RSYNC_PACKAGE=$(\
     echo "${RSYNC_PACKAGE_USE}" \
