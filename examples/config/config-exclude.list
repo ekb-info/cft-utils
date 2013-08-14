@@ -12,6 +12,10 @@
 /etc/group-
 /etc/shadow-
 /etc/gshadow-
+/etc/passwd
+/etc/group
+/etc/shadow
+/etc/gshadow
 /etc/runlevels/install
 /etc/local.d/install.start
 /etc/runlevels/default/cf-serverd
@@ -25,12 +29,4 @@
 /etc/portage/savedconfig
 /etc/ca-certificates.conf
 /etc/conf.d/net.eth0
-/etc/cf-template
-/etc/ssl/postfix/server.*
-/etc/mail/aliases.db
 /etc/resolv.conf
-/etc/group
-/etc/gshadow
-/etc/passwd
-/etc/shadow
-/etc/eselect/postgresql/active.links*
