@@ -1,0 +1,52 @@
+#!/bin/sh
+
+CACHE_FILE=/run/check-cft.cache
+CACHE_TIMEOUT=3600
+CACHE_COMMAND='cft-compare -v'
+
+
+CACHE_FILE_TMP="${CACHE_FILE%/*}/.${CACHE_FILE##*/}~"
+
+
+write_cache() {
+  if RESULT=$(${CACHE_COMMAND} 2>&1); then
+    echo "${RESULT}" > "${CACHE_FILE_TMP}" || exit 3
+    mv "${CACHE_FILE_TMP}" "${CACHE_FILE}" || exit 3
+  else
+    echo "UNKNOWN - ${RESULT}"
+    exit 3
+  fi
+}
+
+
+if [ "$1" = "-C" -o ! -f "${CACHE_FILE}" ]; then
+  write_cache
+else
+  CURRENT_TIME=$(date +'%s')
+  CACHEFILE_CREATION_TIME=$(stat --printf '%Y' "${CACHE_FILE}")
+
+  [ $[${CURRENT_TIME} - ${CACHEFILE_CREATION_TIME}] -gt "${CACHE_TIMEOUT}" ] \
+    && write_cache \
+    || RESULT=$(< "${CACHE_FILE}")
+fi
+
+# info to be sent to nagios
+
+CHANGES_IN_CONFIGS=$(echo "${RESULT}" |grep '^CONFIGS:$' -A1 | grep '^==')
+CHANGES_IN_PACKAGES=$(echo "${RESULT}" |grep '^PACKAGES:$' -A1 | grep '^==')
+
+if [ -z "${CHANGES_IN_CONFIGS}" -a -z "${CHANGES_IN_PACKAGES}" ]; then
+  STATUS="OK - there are no any changes"
+  EXIT=0
+elif [ -n "${CHANGES_IN_PACKAGES}" ]; then
+  STATUS="CRITICAL - 'packages' section has changed:"
+  DETAILS="${RESULT}"
+  EXIT=1
+elif [ -n "${CHANGES_IN_CONFIGS}" -a -z "${CHANGES_IN_PACKAGES}" ]; then
+  STATUS="WARNING - 'configs' section has changed:"
+  DETAILS="${RESULT}"
+  EXIT=2
+fi
+
+echo -e "${STATUS}${DETAILS:+\n}${DETAILS}"
+exit ${EXIT}

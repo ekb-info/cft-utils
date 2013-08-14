@@ -1,5 +1,6 @@
 + Add -i switch for identifiers
 + Add "NO DIFFERENCE" output
++ Add new util 'check-cft' with Nagios' exit status codes handling included
 * Hide empty output sections
 * Fix --help text
 * Fix rsync exit status handling
