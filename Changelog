@@ -2,6 +2,7 @@
 + Add "NO DIFFERENCE" output
 * Hide empty output sections
 * Fix --help text
+* Fix rsync exit status handling
 - Rename switch --show-conf to --show-files
 - Rename switch --show-pkg to --show-packages
 - Rename config option CONFIG_SYNC_OPTS to CFT_RSYNC_OPTS
