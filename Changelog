@@ -1,3 +1,6 @@
+2.0.2 - 2013-08-15
+* Fix cft-get and cft-diff
+
 2.0.1 - 2013-08-14
 * Fix exit code
 

@@ -26,4 +26,4 @@ source "${CONFIG_FILE}" || exit 1
 
 [ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
 
-scp ${CFT_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${DEST}"
+scp ${CFT_SSH_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${DEST}"

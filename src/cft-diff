@@ -28,5 +28,5 @@ if [ ! -f "${FILE}" ]; then
 	exit 1
 fi
 
-ssh ${CFT_OPTS} -p "${CFT_PORT}" "${CFT_HOST}" cat "${CFT_ROOT}${CFT_ROOT:+/}${FILE}" | diff -u "${FILE}" - |tail -n +3
+ssh ${CFT_SSH_OPTS} -p "${CFT_PORT}" "${CFT_HOST}" cat "${CFT_ROOT}${CFT_ROOT:+/}${FILE}" | diff -u "${FILE}" - |tail -n +3
 
