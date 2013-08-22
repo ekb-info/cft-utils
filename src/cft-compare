@@ -129,7 +129,7 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   [ -n "${FILES_OUTPUT}" ] && echo -e "FILES:${FILES_OUTPUT}"
 fi
 
-if [ "${SHOW_ITEMS/[Eexbu]/}" != "${SHOW_ITEMS}" ]; then
+if [ "${SHOW_ITEMS/[Eexbiu]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_PACKAGE_USE=$(\
     rsync --dry-run -drvic -n --no-t --delete --omit-dir-times \
       -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
