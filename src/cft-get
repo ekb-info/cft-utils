@@ -14,16 +14,15 @@ if [ "${1}" = '-i' ]; then
 	shift
 fi
 
-FILE="${1}"
-
-if [ -z "${FILE}" ]; then
-	echo "USAGE: ${0##*/} [-i] <file>"
+if [ -z "${*}" -o "${1}" = "--help" ]; then
+	echo "USAGE: ${0##*/} [-i] <file1> [file2] ..."
 	echo '-i   inplace copy'
 	exit
 fi
 
 source "${CONFIG_FILE}" || exit 1
 
-[ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
-
-scp ${CFT_SSH_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${DEST}"
+for FILE in "${@}"; do
+  [ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
+  scp ${CFT_SSH_OPTS} -p -P "${CFT_PORT}" "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${DEST}" || exit 1
+done
