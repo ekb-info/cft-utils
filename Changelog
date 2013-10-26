@@ -1,3 +1,5 @@
+2.1.0 - 2013-10-26
++ Add support for multiple files to cft-get
 * Fix empty output on iuse filter
 
 2.0.2 - 2013-08-15
