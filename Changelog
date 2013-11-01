@@ -1,3 +1,6 @@
+2.1.1 - 2013-11-01
+* Fix nagios plugin exit status
+
 2.1.0 - 2013-10-26
 + Add support for multiple files to cft-get
 * Fix empty output on iuse filter
