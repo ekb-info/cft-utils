@@ -28,5 +28,12 @@ if [ ! -f "${FILE}" ]; then
 	exit 1
 fi
 
-ssh ${CFT_SSH_OPTS} -p "${CFT_PORT}" "${CFT_HOST}" cat "${CFT_ROOT}${CFT_ROOT:+/}${FILE}" | diff -u "${FILE}" - |tail -n +3
+TEMP_FILE=$(mktemp tmp.XXXX) || exit 1
 
+rsync ${CFT_RSYNC_OPTS} -q \
+    -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
+    "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${TEMP_FILE}"
+
+diff -u "${FILE}" "${TEMP_FILE}" |tail -n +3
+
+rm "${TEMP_FILE}"

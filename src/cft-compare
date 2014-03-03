@@ -96,10 +96,10 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
       --exclude-from=/etc/cft/config-exclude.list \
       --include-from=/etc/cft/config-include.list \
       -f '- /*' \
-      --dry-run -avicxH -n --no-t --delete --omit-dir-times -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
+      --dry-run -aicxH -n --no-t --delete --omit-dir-times \
+      -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/" / \
-    |head -n-3 \
-    |tail -n +2; [ ${PIPESTATUS[0]} -eq 0 ]) || exit $?
+    ) || exit $?
   
   UNTRACKED_DIRS=$( echo "${RSYNC_DATA}" | grep '^\*deleting   .*/$'    | sed 's#^\*deleting   #/#')
   UNTRACKED_FILES=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*[^/]$' | sed 's#^\*deleting   #/#')
@@ -131,17 +131,17 @@ fi
 
 if [ "${SHOW_ITEMS/[Eexbiu]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_PACKAGE_USE=$(\
-    rsync --dry-run -drvic -n --no-t --delete --omit-dir-times \
-      -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
+    rsync ${CFT_RSYNC_OPTS} \
       -f '+ */*/IUSE' \
       -f '+ */*/USE' \
       -f '- */*/**' \
       -f '- .cache' \
       -f '- net-misc/cfengine*' \
       -f '- dev-db/tokyocabinet*' \
+      --dry-run -dric -n --no-t --delete --omit-dir-times \
+      -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/var/db/pkg/" /var/db/pkg/ \
-    |head -n-3 \
-    |tail -n +2; [ ${PIPESTATUS[0]} -eq 0 ]) || exit $?
+    ) || exit $?
   
   RSYNC_PACKAGE=$(\
     echo "${RSYNC_PACKAGE_USE}" \
