@@ -1,29 +1,43 @@
 #!/bin/sh
 
 CONFIG_FILE='/etc/cft/cft.conf'
+PROG_NAME="${0##*/}"
 
-if [ "${1}" = '--config' -o "${1}" = '-c' ]; then
-  CONFIG_FILE="${2}"
-  [ "${CONFIG_FILE#/}" = "${CONFIG_FILE}" ] && CONFIG_FILE="/etc/cft/${CONFIG_FILE}"
-  [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
-  shift 2
-fi
+function print_usage() {
+	echo "USAGE: ${PROG_NAME} [-c <conf_file>] [-i] <file1> [file2] ..."
+  echo "     -c --config <conf_file>    Use config <conf_file> instead of default (${CONFIG_FILE})"
+  echo '     -r --reverse               Inplace copy'
+  echo '     -h --help                  Print this help'
+  exit ${1}
+}
 
-if [ "${1}" = '-i' ]; then
-	INPLACE=yes
-	shift
-fi
+while [ -n "${1}" ]; do
+  case "${1}" in
+    -c|--config)
+      CONFIG_FILE="${2}"
+      [ "${CONFIG_FILE#/}" = "${CONFIG_FILE}" ] && CONFIG_FILE="/etc/cft/${CONFIG_FILE}"
+      [ -e "${CONFIG_FILE}" ] || CONFIG_FILE="${CONFIG_FILE%.conf}.conf"
+      shift
+      ;;
+    -i|--inplace)
+      INPLACE=yes
+      ;;
+    -h|--help)
+      print_usage
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
 
-if [ -z "${*}" -o "${1}" = "--help" ]; then
-	echo "USAGE: ${0##*/} [-i] <file1> [file2] ..."
-	echo '-i   inplace copy'
-	exit
-fi
+[ -z "${*}" ] && print_usage 1
 
 source "${CONFIG_FILE}" || exit 1
 
 for FILE in "${@}"; do
-  [ "${INPLACE}" = 'yes' ] && DEST="${FILE}" || DEST='./'
+  [ "${INPLACE}" = yes ] && DEST="${FILE}" || DEST=./
 
   rsync ${CFT_RSYNC_OPTS} -lpgoDicxH --no-t \
     -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
