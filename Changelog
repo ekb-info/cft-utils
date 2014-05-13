@@ -1,3 +1,8 @@
+2.3.0 - 2014-05-13
++ Add -r switch to cft-diff for reverse diff mode
+* Fix args parser for cft-get and cft-diff
+* Rewrite usage message for cft-get and cft-diff
+
 2.2.0 - 2014-03-04
 * Revert nagios plugin exit status
 * Change file transfer to rsync only
