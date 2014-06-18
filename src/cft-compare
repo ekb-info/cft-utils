@@ -157,12 +157,12 @@ if [ "${SHOW_ITEMS/[Eexbiu]/}" != "${SHOW_ITEMS}" ]; then
   CHANGED_IUSE=$(\
           echo "${RSYNC_PACKAGE_USE}" \
     |grep '^.fc.*/IUSE$' \
-    |sed 's#^........... ##')
+    |sed -e 's#^........... ##' -e 's#-\([0-9]\+.*\)/IUSE$# \1#')
   
   CHANGED_USE=$(\
           echo "${RSYNC_PACKAGE_USE}" \
     |grep '^.fc.*/USE$' \
-    |sed 's#^........... ##')
+    |sed -e 's#^........... ##' -e 's#-\([0-9]\+.*\)/USE$# \1#')
   
   UNTRACKED_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- [^=]\+$' | sed -e 's#^- ##' -e 's/ /-/')
   MISSING_PACKAGES=$(  echo "${RSYNC_PACKAGE}" | grep '^+ [^=]\+$' | sed -e 's#^+ ##' -e 's/ /-/')
