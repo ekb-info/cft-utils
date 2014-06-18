@@ -30,3 +30,6 @@
 /etc/ca-certificates.conf
 /etc/conf.d/net.eth0
 /etc/resolv.conf
+/var/*
+/var/lib/*
+/var/lib/portage/*

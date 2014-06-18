@@ -92,9 +92,10 @@ print_block() {
 
 if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_DATA=$(\
-    rsync ${CFT_RSYNC_OPTS} \
-      --exclude-from=/etc/cft/config-exclude.list \
+    rsync \
       --include-from=/etc/cft/config-include.list \
+      --exclude-from=/etc/cft/config-exclude.list \
+      ${CFT_RSYNC_OPTS} \
       -f '- /*' \
       --dry-run -aicxH -n --no-t --delete --omit-dir-times \
       -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
