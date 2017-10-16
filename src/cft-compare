@@ -90,6 +90,14 @@ print_block() {
   [ "${VERBOSE}" = yes ] && echo "${2}\n"
 }
 
+if [ -r /etc/cf-template-core ]; then
+  CORE_TEMPLATE_NAME=$(</etc/cf-template-core)
+else
+  CORE_TEMPLATE_NAME=NONE
+fi
+
+echo "TEMPLATE: ${CORE_TEMPLATE_NAME}"
+
 if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   RSYNC_DATA=$(\
     rsync \
