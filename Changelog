@@ -1,3 +1,6 @@
+2.5.0 - 2017-10-16
+* Add TEMPLATE line
+
 2.4.0 - 2014-06-18
 * Change output format for IUSE and USE
 * Fix support for include random files outside /etc
