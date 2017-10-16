@@ -101,7 +101,7 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
       -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/" / \
     ) || exit $?
-  
+
   UNTRACKED_DIRS=$( echo "${RSYNC_DATA}" | grep '^\*deleting   .*/$'    | sed 's#^\*deleting   #/#')
   UNTRACKED_FILES=$(echo "${RSYNC_DATA}" | grep '^\*deleting   .*[^/]$' | sed 's#^\*deleting   #/#')
   MISSING_DIRS=$(   echo "${RSYNC_DATA}" | grep '^cd+++++++++ '         | sed 's#^cd+++++++++ #/#')
@@ -114,7 +114,7 @@ if [ "${SHOW_ITEMS/[DFdflscpogU]/}" != "${SHOW_ITEMS}" ]; then
   CHANGED_GROUP=$(  echo "${RSYNC_DATA}" | grep '^.......g... '         | sed 's#^.......g... #/#')
   UNKNOWN=$(echo "${RSYNC_DATA}" \
     |grep -v '^\(\*deleting\|..+++++++++\|cLc\........\|>fc........\|.....p.....\|......o....\|.......g...\) ')
-  
+
   FILES_OUTPUT+=$(print_block 'UNTRACKED DIRS'      "${UNTRACKED_DIRS}"  D)
   FILES_OUTPUT+=$(print_block 'UNTRACKED FILES'     "${UNTRACKED_FILES}" F)
   FILES_OUTPUT+=$(print_block 'MISSING DIRS'        "${MISSING_DIRS}"    d)
@@ -143,7 +143,7 @@ if [ "${SHOW_ITEMS/[Eexbiu]/}" != "${SHOW_ITEMS}" ]; then
       -e "ssh -p ${CFT_PORT:-22} ${CFT_SSH_OPTS}" \
       "${CFT_HOST}:${CFT_ROOT}/var/db/pkg/" /var/db/pkg/ \
     ) || exit $?
-  
+
   RSYNC_PACKAGE=$(\
     echo "${RSYNC_PACKAGE_USE}" \
     |grep -v '^[^/]\+/$\|^[^/]\+$\|/I\?USE$' \
@@ -153,22 +153,22 @@ if [ "${SHOW_ITEMS/[Eexbiu]/}" != "${SHOW_ITEMS}" ]; then
     |sed 's/-\([0-9]\)/ \1/' \
     |sort -k2 -Vk3 \
     |awk '{if (ln==$2) {print $1,$2,lv,"=>",$3; i=0} else {if (i==1) print ll; i=1}; ll=$0; ln=$2; lv=$3}END{if (i==1) print ll}')
-  
+
   CHANGED_IUSE=$(\
           echo "${RSYNC_PACKAGE_USE}" \
     |grep '^.fc.*/IUSE$' \
     |sed -e 's#^........... ##' -e 's#-\([0-9]\+.*\)/IUSE$# \1#')
-  
+
   CHANGED_USE=$(\
           echo "${RSYNC_PACKAGE_USE}" \
     |grep '^.fc.*/USE$' \
     |sed -e 's#^........... ##' -e 's#-\([0-9]\+.*\)/USE$# \1#')
-  
+
   UNTRACKED_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- [^=]\+$' | sed -e 's#^- ##' -e 's/ /-/')
   MISSING_PACKAGES=$(  echo "${RSYNC_PACKAGE}" | grep '^+ [^=]\+$' | sed -e 's#^+ ##' -e 's/ /-/')
   UPGRADE_PACKAGES=$(  echo "${RSYNC_PACKAGE}" | grep '^+ .\+='    | sed -e 's#^+ ##')
   DOWNGRADE_PACKAGES=$(echo "${RSYNC_PACKAGE}" | grep '^- .\+='    | sed -e 's#^- ##' -e 's/ => / <= /')
-  
+
   PACKAGES_OUTPUT+=$(print_block 'UNTRACKED PACKAGES' "${UNTRACKED_PACKAGES}" E)
   PACKAGES_OUTPUT+=$(print_block 'MISSING PACKAGES'   "${MISSING_PACKAGES}"   e)
   PACKAGES_OUTPUT+=$(print_block 'UPGRADE PACKAGES'   "${UPGRADE_PACKAGES}"   x)
