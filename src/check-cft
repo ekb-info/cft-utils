@@ -37,6 +37,7 @@ CHANGES_IN_PACKAGES=$(echo "${RESULT}" |grep '^PACKAGES:$' -A1 | grep '^==')
 
 if [ -z "${CHANGES_IN_CONFIGS}" -a -z "${CHANGES_IN_PACKAGES}" ]; then
   STATUS="OK - no changes"
+  DETAILS=$(echo "${RESULT}" | head -n1)
   EXIT=0
 elif [ -n "${CHANGES_IN_PACKAGES}" ]; then
   STATUS="CRITICAL"
