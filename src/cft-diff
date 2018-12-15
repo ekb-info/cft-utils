@@ -2,11 +2,13 @@
 
 CONFIG_FILE=/etc/cft/cft.conf
 PROG_NAME="${0##*/}"
+COLOR='--color=always'
 
 function print_usage() {
 	echo "USAGE: ${PROG_NAME} [-c <conf_file>] [-r] <file>"
   echo "     -c --config <conf_file>    Use config <conf_file> instead of default (${CONFIG_FILE})"
   echo '     -r --reverse               Show diff in reverse'
+  echo '     -C --no-color              Show diff without colors'
   echo '     -h --help                  Print this help'
   exit ${1}
 }
@@ -21,6 +23,9 @@ while [ -n "${1}" ]; do
       ;;
     -r|--reverse)
       REVERSE=yes
+      ;;
+    -C|--no-color)
+      COLOR=
       ;;
     -h|--help)
       print_usage
@@ -59,9 +64,9 @@ rsync ${CFT_RSYNC_OPTS} -q \
     "${CFT_HOST}":"${CFT_ROOT}${CFT_ROOT:+/}${FILE}" "${TEMP_FILE}"
 
 if [ "${REVERSE}" = yes ]; then
-  diff -u "${TEMP_FILE}" "${FILE}" |tail -n +3
+  diff ${COLOR} -u "${TEMP_FILE}" "${FILE}" |tail -n +3
 else
-  diff -u "${FILE}" "${TEMP_FILE}" |tail -n +3
+  diff ${COLOR} -u "${FILE}" "${TEMP_FILE}" |tail -n +3
 fi
 
 rm "${TEMP_FILE}"
