@@ -1,3 +1,6 @@
+2.5.2 - 2018-06-17
+* Colorize cft-diff output (require diffutils-3.5)
+
 2.5.1 - 2018-06-17
 * Fix TEMPLATE line with NO DIFFERENCE
 
